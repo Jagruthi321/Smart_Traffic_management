@@ -14,7 +14,13 @@ To simulate real-time traffic data, virtual sensors detect the number of vehicle
 The core algorithm dynamically calculates the optimal green light duration for each lane based on the detected vehicle counts. Lanes with more vehicles receive longer green phases to reduce waiting times. The algorithm uses a proportional allocation method — the green time for each lane is proportional to its traffic load relative to the total traffic at the intersection. This adaptive timing ensures efficient and fair signal distribution, reducing idle times for low-traffic lanes and overall congestion.
 
 ### **4. Signal Switching**  
-This module manages the transition of traffic signals between red, green, and yellow lights. It coordinates with the timing calculation module to switch lights at calculated intervals safely. The system ensures that conflicting lanes never receive green simultaneously, preventing accidents. The signal cycle follows a predefined sequence, but the duration of green lights is flexible depending on traffic conditions.
+This module handles the switching of traffic signals between red, green, and yellow states in a **Round Robin manner**. After each lane completes its green phase (as calculated by the Signal Timing module), the control passes to the next lane in a **cyclic order**, ensuring every direction gets a fair turn.
+
+- The order of lanes is predefined (e.g., North → East → South → West), and the system rotates through them continuously.
+- The use of **Round Robin scheduling** ensures **non-starvation** of any direction, even during uneven traffic conditions.
+- The system integrates this with dynamic green time calculation — meaning each round allocates time **proportionally based on traffic**, but the order of service remains cyclic.
+
+This design balances **fairness (via Round Robin)** with **efficiency (via adaptive timing)**, improving overall traffic throughput and minimizing deadlock or lane starvation.
 
 ### **5. Vehicle Movement**  
 Vehicles move forward based on the current traffic light status of their lane. This module handles realistic movement features such as acceleration, deceleration, and stopping at red lights. It also includes basic collision avoidance and lane-following logic to mimic real traffic flow. Vehicle positions are updated frame-by-frame within the simulation environment.
